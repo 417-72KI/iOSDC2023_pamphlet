@@ -13,3 +13,5 @@ iOSDC2022のパンフレットに **「CLIツールで始めるasync/await」** 
 
 Swiftで書くスクリプトの代表例として、**Danger-Swift**の設定ファイルとなる`Dangerfile.swift`が挙げられます。
 **Danger**はCI/CD環境でコードレビューを機械的に実施してくれるツールで、**Danger-Swift**はその名の通り**Danger**がSwiftで書かれたものです。
+
+本記事では、そんな`Dangerfile.swift`で **async/await** を取り扱った事例をご紹介します。
