@@ -1,3 +1,12 @@
+---
+pdf_options:
+  format: A4
+  margin: 20mm 20mm
+  displayHeaderFooter: false
+  stylesheet: https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.10.0/github-markdown.min.css
+  body_class: markdown-body
+---
+
 # Danger-Swiftでもasync/awaitがしたい！
 
 <p align="right">
@@ -15,13 +24,11 @@ iOSDC2022のパンフレットに **「CLIツールで始めるasync/await」** 
 
 [^2]: https://github.com/danger/swift
 
-## スクリプトファイルにおける制約
+## Swift 5.6までのSwiftスクリプト
 
 簡単な例として以下のようなスクリプトを考えてみます。
 
 ```swift
-#!/usr/env/swift
-
 import Foundation
 
 @main
@@ -33,21 +40,47 @@ struct Foo {
 }
 ```
 
-一見良さそうに見えますが、これはエラーになります。
+一見良さそうに見えますが、トップレベルコードでは `@main` が定義できない[^3]ためエラーになります。
+
+[^3]: https://github.com/apple/swift/issues/55127
 
 ```sh
 $ swift sample.swift 
-sample.swift:5:1: error: 'main' attribute cannot be used in a module that contains top-level code
+sample.swift:3:1: error: 'main' attribute cannot be used in a module that contains top-level code
 @main
 ^
 sample.swift:1:1: note: top-level code defined in this source file
-#!/usr/env/swift
+import Foundation
 ^
 ```
 
-これはトップレベルコードでは `@main` が定義できないという仕様によるものです[^3]。
+そのため、Swift 5.6まで `main.swift` やスクリプト上では `Task` を定義して `Task` の実行を `DispatchSemaphore` 等で待つといった本末転倒なワークアラウンドが必要でした。
 
-[^3]: 厳密には仕様ではなくバグの可能性もあり、一応[Issue](https://github.com/apple/swift/issues/55127)も上がっています。
+```swift
+import Foundation
+
+let semaphore = DispatchSemaphore(value: 0)
+Task {
+    try await Task.sleep(nanoseconds: 1_000_000_000)
+
+    print("Hello, World!")
+
+    semaphore.signal()
+}
+semaphore.wait()
+```
+
+## Swift 5.7 からのSwiftスクリプト
+先述の通り、Swift 5.7からトップレベルコードでのConcurrencyサポート(**SE-0343**)が実装されました。
+これにより、 `Task` を介することなく直接 `await` が書けるようになりました。
+
+```swift
+import Foundation
+
+try await Task.sleep(nanoseconds: 1_000_000_000)
+
+print("Hello, World!")
+```
 
 ## **Danger-Swift**について
 
