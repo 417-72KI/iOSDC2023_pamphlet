@@ -1,0 +1,15 @@
+{
+    "filters": {
+        "whitelist": {
+            "allow": [
+            ]
+        }
+    },
+    "rules": {
+        "preset-ja-technical-writing": true,
+        "no-exclamation-question-mark": false
+    },
+    "plugins": [
+        "review"
+    ],
+}
