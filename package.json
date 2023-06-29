@@ -1,0 +1,13 @@
+{
+  "name": "iOSDC2023_pamphlet",
+  "version": "1.0.0",
+  "description": "manuscript for pamphlet in `iOSDC 2023`",
+  "main": "index.js",
+  "repository": "ssh://git@github.com/417-72KI/iOSDC2023_pamphlet.git",
+  "author": "417-72KI <417.72ki@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "md-to-pdf": "^5.2.4"
+  }
+}
