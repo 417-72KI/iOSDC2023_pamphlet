@@ -1,11 +1,11 @@
 ---
-pdf_options:
-  format: A4
-  margin: 20mm 20mm
-  displayHeaderFooter: false
-  stylesheet: https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.10.0/github-markdown.min.css
-  body_class: markdown-body
+papersize: a4
+margin-left: 20mm
+margin-right: 20mm
+margin-top: 20mm
+margin-bottom: 20mm
 ---
+
 
 # Danger-Swiftでもasync/awaitがしたい！
 
