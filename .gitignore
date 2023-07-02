@@ -1,5 +1,3 @@
 .build/
-Sample/
 *.pdf
 *.html
-*.swift

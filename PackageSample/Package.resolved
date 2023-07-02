@@ -1,0 +1,32 @@
+{
+  "pins" : [
+    {
+      "identity" : "octokit.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/417-72KI/octokit.swift",
+      "state" : {
+        "branch" : "fix-review",
+        "revision" : "d1ff4142e7489e5c68ef5b2daf92f49bfcc76eb2"
+      }
+    },
+    {
+      "identity" : "requestkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nerdishbynature/RequestKit.git",
+      "state" : {
+        "revision" : "8b0258ea2a4345cbcac90509b764faacea12efb0",
+        "version" : "3.2.1"
+      }
+    },
+    {
+      "identity" : "swiftformat",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/nicklockwood/SwiftFormat",
+      "state" : {
+        "revision" : "a8b32a96ec569d5ceec207f19ff411aea5c878f7",
+        "version" : "0.51.12"
+      }
+    }
+  ],
+  "version" : 2
+}
