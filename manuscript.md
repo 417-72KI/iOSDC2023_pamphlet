@@ -21,25 +21,45 @@ header-includes: |
 ---
 
 ## はじめに
-iOSDC2022のパンフレットに **「CLIツールで始めるasync/await」** というタイトルで寄稿させていただきました。寄稿当時はSwift5.5〜5.6くらいの頃だったので、CLIツールで **async/await** を扱うために `@main` ディレクティブを使ったエントリポイントを定義するか、 `DispatchQueue` 等を使って処理を待つ必要がありました。
+**Danger** はCI/CD環境でコードレビューを機械的に実施してくれるツールで、 **Danger-Swift**[^1] はそれが Swift で書かれたものです。
+設定ファイルとして `Dangerfile.swift` というスクリプトファイルにコードを記述していきます。
 
-その後、Swift 5.7でトップレベルコードでの **async/await** がサポートされるようになりました[^1]。その結果、 `main.swift` で直接 **async/await** が書けるようになりました。それだけでなく、Swift Packageに属さないスクリプトファイルでも **async/await** が扱えるようになっています。
+[^1]: https://github.com/danger/swift
 
-[^1]: https://github.com/apple/swift-evolution/blob/main/proposals/0343-top-level-concurrency.md
+iOSDC2022のパンフレットに **「CLIツールで始めるasync/await」** というタイトルで寄稿際、特に触れなかったのですが寄稿当時はSwift5.5〜5.6くらいの頃だったので、CLIツールで **async/await** を扱うためにはちょっとした制約がありました。また、同様の制約から **Danger-Swift** で **async/await** を扱うのは事実上不可能とされてきました。
 
-本記事では、Swift5.6と5.7でスクリプトファイルから **async/await** を使う方法を比較した後、Swiftで書くスクリプトの代表例として、**Danger-Swift**[^2]の設定ファイルとなる `Dangerfile.swift` で **async/await** を取り扱った事例をご紹介します。
+風向きが変わったのはSwift 5.7からで、 **Danger-Swift** でも **async/await** を扱う展望が見えたため、本稿で解説します。
 
-[^2]: https://github.com/danger/swift
+## Swift 5.6まで
 
-## Swift 5.6までのSwiftスクリプト
+簡単な例として、1秒待ってから `Hello, World!` と出力するだけのプログラムを考えてみます。
+まず、実行可能なSwift Packageを作成し `main.swift` に以下の通り書いてみます。
 
-簡単な例として以下のようなスクリプトを考えてみます。
+```swift
+import Foundation
+
+try await Task.sleep(nanoseconds: 1_000_000_000)
+print("Hello, World!")
+```
+
+しかし、これを実行しようとしてもトップレベルコードがConcurrencyに対応していないためビルドエラーが発生します。
+
+```sh
+/work/Sample# swift package init --type executable
+(中略)
+/work/Sample# swift run
+/work/Sample/Sources/Sample/main.swift:3:11: error: 'async' call in a function that does not support concurrency
+try await Task.sleep(nanoseconds: 1_000_000_000)
+          ^
+```
+
+これを解決する手段として、エントリーポイントを `main.swift` の代わりに `@main` ディレクティブを使った型に置き換えます。
 
 ```swift
 import Foundation
 
 @main
-struct Foo {
+enum Foo {
     static func main() async throws {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         print("Hello, World!")
@@ -47,9 +67,19 @@ struct Foo {
 }
 ```
 
-一見良さそうに見えますが、トップレベルコードでは `@main` が定義できない[^3]ためエラーになります。
+これを実行すると、無事実行して1秒後に `Hello, World!` が出力されました。
 
-[^3]: https://github.com/apple/swift/issues/55127
+```sh
+/work/Sample# swift run
+Building for debugging...
+Build complete! (0.13s)
+Hello, World!
+```
+
+それでは、このコードをスクリプトファイルとして扱ってみましょう。  
+一見問題がなさそうに見えますが、トップレベルコードでは `@main` が定義できない[^2]ためエラーになります。
+
+[^2]: https://github.com/apple/swift/issues/55127
 
 ```sh
 $ swift sample.swift 
@@ -78,8 +108,11 @@ semaphore.wait()
 ```
 
 ## Swift 5.7 からのSwiftスクリプト
-先述の通り、Swift 5.7からトップレベルコードでのConcurrencyサポート(**SE-0343**)が実装されました。
+先述の通り、Swift 5.7からトップレベルコードでのConcurrencyサポート(**SE-0343**[^3])が実装されました。
 これにより、 `Task` を介することなく直接 `await` が書けるようになりました。
+
+[^3]: https://github.com/apple/swift-evolution/blob/main/proposals/0343-top-level-concurrency.md
+
 
 ```swift
 import Foundation
