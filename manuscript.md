@@ -125,3 +125,11 @@ print("Hello, World!")
 ## **Danger-Swift**について
 
 **Danger**はCI/CD環境でコードレビューを機械的に実施してくれるツールで、**Danger-Swift**はその名の通り**Danger**がSwiftで書かれたものです。
+
+
+TODO
+```swift
+let review = try await api.postReview(owner: owner, repository: repo_name, pullRequestNumber: prNumber, event: .approve)
+let submitted = try await api.submitReview(owner: owner, repository: repo_name, pullRequestNumber: prNumber, reviewId: review.id, event: .approve)
+print(submitted)
+```
