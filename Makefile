@@ -1,4 +1,8 @@
 FILENAME=manuscript
 
 pdf:
-	@pandoc $(FILENAME).md -s -o $(FILENAME).pdf --pdf-engine=wkhtmltopdf -f gfm
+	@pandoc $(FILENAME).md -s \
+	-o $(FILENAME).pdf \
+	--pdf-engine=wkhtmltopdf \
+	--highlight-style espresso \
+	-f gfm
