@@ -14,6 +14,9 @@ header-includes: |
 
     code.swift span.dv { color: #1c00cf; } /* DecVal */
     code.swift span.st { color: #c41a16; } /* String */
+
+    div.sourceCode pre.sh { background-color: #000000; }
+    div.sourceCode code.bash { color: #28FE14; }
   </style>
 ---
 
