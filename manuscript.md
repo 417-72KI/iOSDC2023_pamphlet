@@ -6,6 +6,14 @@ geometry: margin=20mm
 header-includes: |
   <style>
     pre > code.sourceCode { white-space: pre-wrap; position: relative; }
+    div.sourceCode code.swift { color: #000000; }
+    code.swift span.at { color: #9B2393; font-weight: bold; } /* Attribute */
+    code.swift span.kw { color: #9B2393; font-weight: bold; } /* Keyword */
+    code.swift span.fu { color: #9B2393; font-weight: bold; } /* Function */
+    code.swift span.cf { color: #9B2393; font-weight: bold; } /* ControlFlow */
+
+    code.swift span.dv { color: #1c00cf; } /* DecVal */
+    code.swift span.st { color: #c41a16; } /* String */
   </style>
 ---
 
