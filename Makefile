@@ -22,3 +22,7 @@ sample:
 	mkdir Sample
 	cd Sample && \
 	swift package init --type executable
+
+setup:
+	brew install pandoc
+	brew install --cask wkhtmltopdf
