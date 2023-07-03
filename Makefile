@@ -2,6 +2,8 @@
 
 FILENAME=manuscript
 
+all: pdf html
+
 pdf:
 	pandoc $(FILENAME).md -s \
 	-o $(FILENAME).pdf \
