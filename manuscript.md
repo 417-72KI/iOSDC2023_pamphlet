@@ -145,14 +145,44 @@ print("Hello, World!")
 
 ### **Danger-Swift** で **async/await**　が使えると何が嬉しいの？
 
-`Dangerfile.swift` で使う `Danger` の API にGitHub APIを扱う **OctoKit.swift**[^4] のAPIが含まれています。
+`Dangerfile.swift` で使う `Danger` の API にGitHub APIを扱う **octokit.swift**[^4] のAPIが含まれています。
 Swift 5.7で **async/await** を使って呼び出せるようになったことで、 GitHub API を使ったバリデーションや PR の操作がしやすくなります。
+例えば、「警告やエラーが無かったら自動でApproveする」といったことができるようになります。
 
 [^4]: https://github.com/nerdishbynature/octokit.swift
 
-TODO
+※ 以下で書いている `postReview` や `submitReview` はまだ **octokit.swift** 上でリリースされておらず、筆者のforkに実装したもの[^5]を使用しています。
+現状の **Danger-Swift** ではこれらのAPIは使用できない[^6]ため、将来的に実現できる理想のコードになります。
+
+[^5]: https://github.com/nerdishbynature/octokit.swift/pull/171
+[^6]: 7/4現在
+
 ```swift
-let review = try await api.postReview(owner: owner, repository: repo_name, pullRequestNumber: prNumber, event: .approve)
-let submitted = try await api.submitReview(owner: owner, repository: repo_name, pullRequestNumber: prNumber, reviewId: review.id, event: .approve)
-print(submitted)
+import Danger
+
+let danger = Danger()
+
+SwiftLint.lint(inline: true)
+
+(中略)
+
+if (danger.warnings + danger.fails).isEmpty {
+    let api = danger.github.api
+    // Reviewを開始する
+    let review = try await api.postReview(
+        owner: owner, 
+        repository: repository, 
+        pullRequestNumber: prNumber, 
+        event: .approve
+    )
+    // Reviewを完了する
+    let submitted = try await api.submitReview(
+        owner: owner,
+        repository: repository,
+        pullRequestNumber: prNumber,
+        reviewId: review.id,
+        event: .approve
+    )
+    print(submitted)
+}
 ```
