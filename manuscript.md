@@ -186,3 +186,5 @@ if (danger.warnings + danger.fails).isEmpty {
     print(submitted)
 }
 ```
+
+## 終わりに
