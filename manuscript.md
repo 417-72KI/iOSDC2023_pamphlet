@@ -28,7 +28,7 @@ header-includes: |
 
 ## はじめに
 **Danger** はCI/CD環境でコードレビューを機械的に実施してくれるツールで、 **Danger-Swift**[^1] はそれが Swift で書かれたものです。
-設定ファイルとして `Dangerfile.swift` というスクリプトファイルにコードを記述していきます。
+設定ファイルとして `Dangerfile.swift` というファイルにコードを記述していきます。
 
 [^1]: https://github.com/danger/swift
 
@@ -104,7 +104,7 @@ import Foundation
 
 このことから、スクリプトファイルは `main.swift` と同様の制約が存在することが分かります。
 
-そして、Swift 5.6 までこの場合は `Task` を定義して `Task` の実行を `DispatchSemaphore` 等で待つといった本末転倒なワークアラウンドが必要でした。
+そして、Swift 5.6 までは `Task` を定義して `Task` の実行を `DispatchSemaphore` 等で待つといった本末転倒なワークアラウンドが必要でした。
 
 ```swift
 import Foundation
@@ -135,10 +135,20 @@ try await Task.sleep(nanoseconds: 1_000_000_000)
 print("Hello, World!")
 ```
 
+<br>
+
 ## **Danger-Swift**について
 
 **Danger**はCI/CD環境でコードレビューを機械的に実施してくれるツールで、**Danger-Swift**はその名の通り**Danger**がSwiftで書かれたものです。
+詳細は省きますが `Dangerfile.swift` をスクリプトファイルとして実行する仕様になっています。
+そのため、Swift 5.7になるまで **async/await** が事実上使えない(使うメリットがコストに見合わない)状況になっていました。
 
+### **Danger-Swift** で **async/await**　が使えると何が嬉しいの？
+
+`Dangerfile.swift` で使う `Danger` の API にGitHub APIを扱う **OctoKit.swift**[^4] のAPIが含まれています。
+Swift 5.7で **async/await** を使って呼び出せるようになったことで、 GitHub API を使ったバリデーションや PR の操作がしやすくなります。
+
+[^4]: https://github.com/nerdishbynature/octokit.swift
 
 TODO
 ```swift
