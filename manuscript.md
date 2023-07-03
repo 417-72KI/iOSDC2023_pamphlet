@@ -5,18 +5,24 @@ papersize: a4
 geometry: margin=20mm
 header-includes: |
   <style>
-    pre > code.sourceCode { white-space: pre-wrap; position: relative; }
+    div.sourceCode { background-color: #ffffff; }
+    pre.sourceCode:before { border: 1px solid #2a211c; content: " "; position: absolute; z-index: -1; }
+    pre.sourceCode { border: 1px solid #2a211c; }
+    pre code.sourceCode { white-space: pre-wrap; position: relative; }
+
     div.sourceCode code.swift { color: #000000; }
-    code.swift span.at { color: #9B2393; font-weight: bold; } /* Attribute */
-    code.swift span.kw { color: #9B2393; font-weight: bold; } /* Keyword */
-    code.swift span.fu { color: #9B2393; font-weight: bold; } /* Function */
-    code.swift span.cf { color: #9B2393; font-weight: bold; } /* ControlFlow */
+    code.swift span.at { color: #9b2393; font-weight: bold; } /* Attribute */
+    code.swift span.kw { color: #9b2393; font-weight: bold; } /* Keyword */
+    code.swift span.fu { color: #9b2393; font-weight: bold; } /* Function */
+    code.swift span.cf { color: #9b2393; font-weight: bold; } /* ControlFlow */
 
     code.swift span.dv { color: #1c00cf; } /* DecVal */
     code.swift span.st { color: #c41a16; } /* String */
 
     div.sourceCode pre.sh { background-color: #000000; }
-    div.sourceCode code.bash { color: #28FE14; }
+    div.sourceCode code.bash { color: #28fe14; }
+    code.bash span.kw { color: #28fe14; font-weight: bold; }
+    code.bash span.er { color: #28fe14; font-weight: bold; }
   </style>
 ---
 
