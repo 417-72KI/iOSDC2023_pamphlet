@@ -51,15 +51,16 @@ print("Hello, World!")
 しかし、これを実行しようとしてもトップレベルコードがConcurrencyに対応していないためビルドエラーが発生します。
 
 ```sh
-/work/Sample# swift package init --type executable
+/work/PackageSample$ swift package init --type executable
 (中略)
-/work/Sample# swift run
-/work/Sample/Sources/Sample/main.swift:3:11: error: 'async' call in a function that does not support concurrency
+/work/PackageSample$ swift run
+/work/PackageSample/Sources/PackageSample/main.swift:3:11: error: 'async' call in a function that does not support concurrency
 try await Task.sleep(nanoseconds: 1_000_000_000)
           ^
 ```
 
 これを解決する手段として、エントリーポイントを `main.swift` の代わりに `@main` ディレクティブを使った型に置き換えます。
+ここでは `main.swift` を消して `Foo.swift` を作ります。
 
 ```swift
 import Foundation
@@ -76,28 +77,34 @@ enum Foo {
 これを実行すると、無事実行して1秒後に `Hello, World!` が出力されました。
 
 ```sh
-/work/Sample# swift run
+/work/PackageSample$ swift run
 Building for debugging...
 Build complete! (0.13s)
 Hello, World!
 ```
 
-それでは、このコードをスクリプトファイルとして扱ってみましょう。  
-一見問題がなさそうに見えますが、トップレベルコードでは `@main` が定義できない[^2]ためエラーになります。
-
-[^2]: https://github.com/apple/swift/issues/55127
+それでは、このコードを単体のスクリプトファイルとして扱ってみましょう。
 
 ```sh
-$ swift sample.swift 
-sample.swift:3:1: error: 'main' attribute cannot be used in a module that contains top-level code
+$ swift Sources/PackageSample/Foo.swift
+Sources/PackageSample/Foo.swift:3:1: error: 'main' attribute cannot be used in a module that contains top-level code
 @main
 ^
-sample.swift:1:1: note: top-level code defined in this source file
+Sources/PackageSample/Foo.swift:1:1: note: top-level code defined in this source file
+import Foundation
+^
+Sources/PackageSample/Foo.swift:1:1: note: pass '-parse-as-library' to compiler invocation if this is intentional
 import Foundation
 ^
 ```
 
-そのため、Swift 5.6まで `main.swift` やスクリプト上では `Task` を定義して `Task` の実行を `DispatchSemaphore` 等で待つといった本末転倒なワークアラウンドが必要でした。
+トップレベルコードでは `@main` が定義できない[^2]というエラーになってしまいました。
+
+[^2]: https://github.com/apple/swift/issues/55127
+
+このことから、スクリプトファイルは `main.swift` と同様の制約が存在することが分かります。
+
+そして、Swift 5.6 までこの場合は `Task` を定義して `Task` の実行を `DispatchSemaphore` 等で待つといった本末転倒なワークアラウンドが必要でした。
 
 ```swift
 import Foundation
