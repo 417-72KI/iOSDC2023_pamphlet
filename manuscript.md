@@ -131,7 +131,7 @@ Task {
 semaphore.wait()
 ```
 
-<br><br><br>
+<br>
 
 ### Swift 5.7 以降
 先述の通り、Swift 5.7からトップレベルコードでのConcurrencyサポート(**SE-0343**[^4])が実装されました。
