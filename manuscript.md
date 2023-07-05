@@ -27,28 +27,30 @@ header-includes: |
 ---
 
 ## はじめに
-**Danger** はCI/CD環境でコードレビューを機械的に実施してくれるツールで、 **Danger-Swift**[^1] はそれが Swift で書かれたものです。
-設定ファイルとして `Dangerfile.swift` というファイルにコードを記述していきます。
+**Danger**はCI/CD環境でコードレビューを機械的に実施してくれるツールで、**Danger-Swift**[^1] はそれが Swift で書かれたものです。
+設定ファイルとして`Dangerfile.swift`というファイルにコードを記述していきます。
 
 [^1]: https://github.com/danger/swift
 
-iOSDC2022のパンフレットに **「CLIツールで始めるasync/await」** というタイトルで寄稿際、特に触れなかったのですが寄稿当時はSwift5.5〜5.6くらいの頃だったので、CLIツールで **async/await** を扱うためにはちょっとした制約がありました。また、同様の制約から **Danger-Swift** で **async/await** を扱うのは事実上不可能とされてきました。
+iOSDC2022のパンフレットに **「CLIツールで始めるasync/await」** というタイトルで寄稿した際、特に触れなかったのですが当時はSwift5.5〜5.6くらいの頃だったので、CLIツールで**async/await**を扱うためにはちょっとした制約がありました。また、同様の制約から**Danger-Swift**で**async/await**を扱うのは事実上不可能とされてきました。
 
-風向きが変わったのはSwift 5.7からで、 **Danger-Swift** でも **async/await** を扱う展望が見えたため、本稿で解説します。
+風向きが変わったのはSwift 5.7からで、**Danger-Swift**でも**async/await**を扱う展望が見えたため、本稿で解説します。
 
 ## **Danger-Swift**について
 
-**Danger**はCI/CD環境でコードレビューを機械的に実施してくれるツールで、**Danger-Swift** はその名の通り **Danger** がSwiftで書かれたもの[^2]です。
-詳細は省きますが `Dangerfile.swift` をスクリプトファイルとして実行する仕様になっています。
+**Danger**はCI/CD環境でコードレビューを機械的に実施してくれるツールで、**Danger-Swift**はその名の通り**Danger**がSwiftで書かれたもの[^2]です。
+詳細は省きますが`Dangerfile.swift`をスクリプトファイルとして実行する仕様になっています。
 
-このスクリプトファイルについて触れる前に、CLIツールにおける **async/await** の取り扱いについて解説します。
+このスクリプトファイルについて触れる前に、CLIツールにおける**async/await**の取り扱いについて解説します。
 
-[^2]: 正確には **Danger-JS** をSwiftでラップしたものになります
+[^2]: 正確には**Danger-JS**をSwiftでラップしたものになります
 
-## Swift 5.6まで
+## CLIツールと**async/await**
 
-簡単な例として、「1秒待ってから `Hello, World!` と出力する」プログラムを考えてみます。
-まず、実行可能なSwift Packageを作成し `main.swift` に以下の通り書いてみます。
+### Swift 5.6まで
+
+簡単な例として、「1秒待ってから`Hello, World!`と出力する」プログラムを考えてみます。
+まず、実行可能なSwift Packageを作成し`main.swift`に以下の通り書いてみます。
 
 ```swift
 import Foundation
@@ -68,8 +70,8 @@ try await Task.sleep(nanoseconds: 1_000_000_000)
           ^
 ```
 
-これを解決する手段として、エントリーポイントを `main.swift` の代わりに `@main` ディレクティブを使った型に置き換えます。
-ここでは `main.swift` を消して `Foo.swift` を作成します。
+これを解決する手段として、エントリーポイントを`main.swift`の代わりに`@main`ディレクティブを使った型に置き換えます。
+ここでは`main.swift`を消して`Foo.swift`を作成します。
 
 ```swift
 import Foundation
@@ -83,7 +85,7 @@ enum Foo {
 }
 ```
 
-これを実行すると、無事実行して1秒後に `Hello, World!` が出力されました。
+これを実行すると、無事実行して1秒後に`Hello, World!`が出力されました。
 
 ```sh
 /work/PackageSample$ swift run
@@ -107,13 +109,13 @@ import Foundation
 ^
 ```
 
-トップレベルコードでは `@main` が定義できない[^3]というエラーになってしまいました。
+トップレベルコードでは`@main`が定義できない[^3]というエラーになってしまいました。
 
 [^3]: https://github.com/apple/swift/issues/55127
 
-このことから、スクリプトファイルは `main.swift` と同様の制約が存在することが分かります。
+このことから、スクリプトファイルは`main.swift`と同様の制約が存在することが分かります。
 
-そして、Swift 5.6 までは `Task` を定義して `Task` の実行を `DispatchSemaphore` 等で待つといった本末転倒なワークアラウンドが必要でした。
+そして、Swift 5.6 までは`Task`を定義して`Task`の実行を`DispatchSemaphore`等で待つといった本末転倒なワークアラウンドが必要でした。
 
 ```swift
 import Foundation
@@ -131,9 +133,9 @@ semaphore.wait()
 
 <br><br><br>
 
-## Swift 5.7 からのSwiftスクリプト
+### Swift 5.7 以降
 先述の通り、Swift 5.7からトップレベルコードでのConcurrencyサポート(**SE-0343**[^4])が実装されました。
-これにより、 `Task` を介することなく直接 `await` が書けるようになりました。
+これにより、`main.swift`やスクリプトでも`Task`を介することなく直接`await`が書けるようになりました。
 
 [^4]: https://github.com/apple/swift-evolution/blob/main/proposals/0343-top-level-concurrency.md
 
@@ -146,16 +148,16 @@ try await Task.sleep(nanoseconds: 1_000_000_000)
 print("Hello, World!")
 ```
 
-## **Danger-Swift** と **async/await**
+## **Danger-Swift**と**async/await**
 
-`Dangerfile.swift` で使う `Danger` の API にGitHub APIを扱う **octokit.swift**[^5] のAPIが含まれています。
-Swift 5.7で **async/await** を使って呼び出せるようになったことで、 GitHub API を使ったバリデーションや PR の操作がしやすくなります。
+`Dangerfile.swift`で使う`Danger`の API にGitHub APIを扱う**octokit.swift**[^5] のAPIが含まれています。
+Swift 5.7で**async/await**を使って呼び出せるようになったことで、 GitHub API を使ったバリデーションや PR の操作がしやすくなります。
 例えば、「警告やエラーが無かったら自動でApproveする」といったことができるようになります。
 
 [^5]: https://github.com/nerdishbynature/octokit.swift
 
-※ 以下で書いている `postReview` や `submitReview` はPR[^6]を出している途中のものでまだ **octokit.swift** 上でリリースされていません。
-現状の **Danger-Swift** でもこれらのAPIは使用できない[^7]ため、将来的に実現できる理想のコードになります。
+※ 以下で書いている`postReview`や`submitReview`はPR[^6]を出している途中のものでまだ**octokit.swift**上でリリースされていません。
+現状の**Danger-Swift**でもこれらのAPIは使用できない[^7]ため、将来的に実現できる理想のコードになります。
 
 [^6]: https://github.com/nerdishbynature/octokit.swift/pull/171
 [^7]: 7/4現在
@@ -190,6 +192,6 @@ if (danger.warnings + danger.fails).isEmpty {
 }
 ```
 
-APIの仕様上Approveをつけるために2つのAPIを叩く必要があるため、それだけでも **async/await** で直列に書けるメリットが分かるかと思います。
+APIの仕様上Approveをつけるために2つのAPIを叩く必要があるため、それだけでも**async/await**で直列に書けるメリットが分かるかと思います。
 
 ## 終わりに
