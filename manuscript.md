@@ -149,15 +149,14 @@ print("Hello, World!")
 ```
 
 ## **Danger-Swift**と**async/await**
-
-`Dangerfile.swift`で使う`Danger`の API にGitHub APIを扱う**octokit.swift**[^5] のAPIが含まれています。
+さて、本題となる **Danger-Swift** についてですが、`Dangerfile.swift`で使う`Danger`の API にGitHub APIを扱う**Octokit.swift**[^5] のAPIが含まれています。
 Swift 5.7で**async/await**を使って呼び出せるようになったことで、 GitHub API を使ったバリデーションや PR の操作がしやすくなります。
 例えば、「警告やエラーが無かったら自動でApproveする」といったことができるようになります。
 
 [^5]: https://github.com/nerdishbynature/octokit.swift
 
-※ 以下で書いている`postReview`や`submitReview`はPR[^6]を出している途中のものでまだ**octokit.swift**上でリリースされていません。
-現状の**Danger-Swift**でもこれらのAPIは使用できない[^7]ため、将来的に実現できる理想のコードになります。
+※ 以下で書いている`postReview`や`submitReview`はPR[^6]を出している途中のものでまだ**Octokit.swift**上でリリースされていません。
+現状の**Danger-Swift**でもこれらのAPIは使用できない[^7]ため、将来的に実現できるであろうコードを紹介します。
 
 [^6]: https://github.com/nerdishbynature/octokit.swift/pull/171
 [^7]: 7/4現在
@@ -193,5 +192,6 @@ if (danger.warnings + danger.fails).isEmpty {
 ```
 
 APIの仕様上Approveをつけるために2つのAPIを叩く必要があるため、それだけでも**async/await**で直列に書けるメリットが分かるかと思います。
+また、今回は**Octokit.swift**のAPIを使う例で書いていますが`URLSession`を使った通常の通信処理も**async/await**で扱えるため、プロジェクト管理ツール(JIRA、Notion等)のAPIと連携してPRの状態を管理するといったことも可能になると考えています。
 
 ## 終わりに
