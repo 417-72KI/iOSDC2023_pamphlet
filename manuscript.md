@@ -197,10 +197,10 @@ if (danger.warnings + danger.fails).isEmpty {
 }
 ```
 
-APIの仕様上Approveをつけるために2つのAPIを叩く必要があるため、それだけでもasync/awaitで直列に書けるメリットが分かるはずです。
+APIの仕様上Approveをつけるために2つのAPIを叩く必要があるため、今まで書かなければいけなかったコールバックを考えるとそれだけでもasync/awaitで直列に書けるメリットが分かるはずです。
 
 ## 終わりに
 トップレベルコードでasync/awaitが扱えるようになったことで、Danger-Swiftをもっとリッチに扱える環境が整いました。
-今回はDanger-Swiftに内蔵しているOctokit.swiftのAPIを使う例で書いていますが`URLSession`を使った通常の通信処理もasync/awaitで扱えるため、JIRA・Trello・Notion等のツールと連携してPRの状態を管理するといったことも簡単にできるようになるでしょう。
+今回はDanger-Swiftに内蔵しているOctokit.swiftのAPIを使う例で書いていますが、`URLSession`を使った通常の通信処理もasync/awaitで扱えるため、JIRA・Trello・Notion等のツールと連携してPRの状態を管理するといったことも簡単にできるようになるでしょう。
 
 これを機にDanger-Swiftを使った事例が増えてコミュニティがもっと活発になってくれれば幸いです。
