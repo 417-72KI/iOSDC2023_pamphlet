@@ -27,7 +27,9 @@ header-includes: |
 ---
 
 ## はじめに
-iOSDC2022のパンフレットに **「CLIツールで始めるasync/await」** というタイトルで寄稿しました。その際は特に触れなかったのですが、当時はSwift5.5〜5.6くらいの頃だったので、CLIツール(Termialから実行するプログラム)で async/await を扱うためにはちょっとした制約がありました。また、同様の制約から Danger-Swift[^1] で async/await を扱うのは事実上不可能とされてきました。
+iOSDC 2022 のパンフレットに **「CLIツールで始めるasync/await」** というタイトルで寄稿しました。その際は特に触れなかったのですが、当時はSwift5.5〜5.6くらいの頃だったので、CLIツール(Termialから実行するプログラム)で async/await を扱うためにはちょっとした制約がありました。また、同様の制約から Danger-Swift[^1] で async/await を扱うのは事実上不可能とされてきました。
+
+[^1]: https://github.com/danger/swift
 
 風向きが変わったのはSwift 5.7からで、 Danger-Swift でも async/await を扱う展望が見えたため、本稿で解説します。
 
@@ -36,7 +38,7 @@ iOSDC2022のパンフレットに **「CLIツールで始めるasync/await」** 
 Danger はCI/CD環境でコードレビューを機械的に実施してくれるツールで、 Danger-Swift  はその名の通りDangerがSwiftで書かれたもの[^2]です。
 詳細は省きますが`Dangerfile.swift`をスクリプトファイルとして実行する仕様になっています。
 
-このスクリプトファイルについて触れる前に、CLIツールにおける async/await の取り扱いについて解説します。
+このスクリプトファイルで async/await を取り扱うために、まずは前提としてCLIツールにおける async/await の取り扱いについて解説します。
 
 [^2]: 正確には Danger-JS をSwiftでラップしたものになります
 
@@ -126,7 +128,7 @@ Task {
 semaphore.wait()
 ```
 
-<br>
+<div class="page-break"></div>
 
 ### Swift 5.7 以降
 先述の通り、Swift 5.7からトップレベルコードでのConcurrencyサポート(**SE-0343**[^4])が実装されました。

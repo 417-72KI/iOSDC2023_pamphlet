@@ -427,3 +427,7 @@ pre tt {
 p.author {
   text-align: right;
 }
+
+.page-break {
+  page-break-before:always;
+}
