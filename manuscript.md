@@ -27,25 +27,20 @@ header-includes: |
 ---
 
 ## はじめに
-**Danger**はCI/CD環境でコードレビューを機械的に実施してくれるツールで、**Danger-Swift**[^1] はそれが Swift で書かれたものです。
-設定ファイルとして`Dangerfile.swift`というファイルにコードを記述していきます。
+iOSDC2022のパンフレットに **「CLIツールで始めるasync/await」** というタイトルで寄稿しました。その際は特に触れなかったのですが、当時はSwift5.5〜5.6くらいの頃だったので、CLIツール(Termialから実行するプログラム)で async/await を扱うためにはちょっとした制約がありました。また、同様の制約から Danger-Swift[^1] で async/await を扱うのは事実上不可能とされてきました。
 
-[^1]: https://github.com/danger/swift
+風向きが変わったのはSwift 5.7からで、 Danger-Swift でも async/await を扱う展望が見えたため、本稿で解説します。
 
-iOSDC2022のパンフレットに **「CLIツールで始めるasync/await」** というタイトルで寄稿した際、特に触れなかったのですが当時はSwift5.5〜5.6くらいの頃だったので、CLIツールで**async/await**を扱うためにはちょっとした制約がありました。また、同様の制約から**Danger-Swift**で**async/await**を扱うのは事実上不可能とされてきました。
+## Danger-Swift について
 
-風向きが変わったのはSwift 5.7からで、**Danger-Swift**でも**async/await**を扱う展望が見えたため、本稿で解説します。
-
-## **Danger-Swift**について
-
-**Danger**はCI/CD環境でコードレビューを機械的に実施してくれるツールで、**Danger-Swift**はその名の通り**Danger**がSwiftで書かれたもの[^2]です。
+Danger はCI/CD環境でコードレビューを機械的に実施してくれるツールで、 Danger-Swift  はその名の通りDangerがSwiftで書かれたもの[^2]です。
 詳細は省きますが`Dangerfile.swift`をスクリプトファイルとして実行する仕様になっています。
 
-このスクリプトファイルについて触れる前に、CLIツールにおける**async/await**の取り扱いについて解説します。
+このスクリプトファイルについて触れる前に、CLIツールにおける async/await の取り扱いについて解説します。
 
-[^2]: 正確には**Danger-JS**をSwiftでラップしたものになります
+[^2]: 正確には Danger-JS をSwiftでラップしたものになります
 
-## CLIツールと**async/await**
+## CLIツールと async/await 
 
 ### Swift 5.6まで
 
@@ -148,15 +143,15 @@ try await Task.sleep(nanoseconds: 1_000_000_000)
 print("Hello, World!")
 ```
 
-## **Danger-Swift**と**async/await**
-さて、本題となる **Danger-Swift** についてですが、`Dangerfile.swift`で使う`Danger`の API にGitHub APIを扱う**Octokit.swift**[^5] のAPIが含まれています。
-Swift 5.7で**async/await**を使って呼び出せるようになったことで、 GitHub API を使ったバリデーションや PR の操作がしやすくなります。
+## Danger-Swift と async/await
+さて、本題となる Danger-Swift についてですが、`Dangerfile.swift`で使う Danger の API に GitHub API を扱う**Octokit.swift**[^5] のAPIが含まれています。
+Swift 5.7で async/await を使って呼び出せるようになったことで、 GitHub API を使ったバリデーションや PR の操作がしやすくなります。
 例えば、「警告やエラーが無かったら自動でApproveする」といったことができるようになります。
 
 [^5]: https://github.com/nerdishbynature/octokit.swift
 
-※ 以下で書いている`postReview`や`submitReview`はPR[^6]を出している途中のものでまだ**Octokit.swift**上でリリースされていません。
-現状の**Danger-Swift**でもこれらのAPIは使用できない[^7]ため、将来的に実現できるであろうコードを紹介します。
+※ 以下で書いている`postReview`や`submitReview`はPR[^6]を出している途中のものでまだOctokit.swift上でリリースされていません。
+現状の Danger-Swift でもこれらのAPIは使用できない[^7]ため、将来的に実現できるであろうコードを紹介します。
 
 [^6]: https://github.com/nerdishbynature/octokit.swift/pull/171
 [^7]: 7/4現在
@@ -191,7 +186,7 @@ if (danger.warnings + danger.fails).isEmpty {
 }
 ```
 
-APIの仕様上Approveをつけるために2つのAPIを叩く必要があるため、それだけでも**async/await**で直列に書けるメリットが分かるかと思います。
-また、今回は**Octokit.swift**のAPIを使う例で書いていますが`URLSession`を使った通常の通信処理も**async/await**で扱えるため、プロジェクト管理ツール(JIRA、Notion等)のAPIと連携してPRの状態を管理するといったことも可能になると考えています。
+APIの仕様上Approveをつけるために2つのAPIを叩く必要があるため、それだけでも async/await で直列に書けるメリットが分かるかと思います。
+また、今回はOctokit.swiftのAPIを使う例で書いていますが`URLSession`を使った通常の通信処理も async/await で扱えるため、JIRA・Trello・Notion等のツールと連携してPRの状態を管理するといったことも可能になると考えています。
 
 ## 終わりに
