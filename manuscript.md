@@ -27,24 +27,24 @@ header-includes: |
 ---
 
 ## はじめに
-iOSDC 2022 のパンフレットに **「CLIツールで始めるasync/await」** というタイトルで寄稿しました。その際は特に触れなかったのですが、当時はSwift5.5〜5.6くらいの頃だったので、トップレベルコードで async/await を直接扱えないという制約がありました。また、同様の制約から Danger-Swift[^1] で async/await を扱うのは事実上不可能とされてきました。
+iOSDC 2022のパンフレットに **「CLIツールで始めるasync/await」** というタイトルで寄稿しました。その際は特に触れなかったのですが、当時はSwift5.5〜5.6くらいの頃だったので、トップレベルコードでasync/awaitを直接扱えないという制約がありました。また、同様の制約からDanger-Swift[^1] でasync/awaitを扱うのは事実上不可能とされてきました。
 
 [^1]: https://github.com/danger/swift
 
-風向きが変わったのはSwift 5.7からで、 Danger-Swift でも async/await を扱う展望が見えたため、本稿で解説します。
+風向きが変わったのはSwift 5.7からで、 Danger-Swiftでもasync/awaitを扱う展望が見えたため、本稿で解説します。
 
 ## エントリーポイントとトップレベルコード
 プログラムが実行される際最初に呼び出される部分をエントリーポイントと呼び、Swiftにおいては `main.swift` や `@main` ディレクティブが付いた型の `static func main()` 等がそれに該当します。
-また `main.swift` やSwiftスクリプトには処理を直接記述することができ、これをトップレベルコードと呼びます。
+また `main.swift` やSwiftスクリプトには処理を直接記述でき、これをトップレベルコードと呼びます。
 
 ## Danger-Swift について
 
-Danger はCI/CD環境でコードレビューを機械的に実施してくれるツールで元々Rubyで書かれていました。それが Swift で書かれたもの[^2]が Danger-Swift です。
+DangerはCI/CD環境でコードレビューを機械的に実施してくれるツールです。元々Rubyで書かれていましたが、それをSwiftで移植した[^2]のがDanger-Swiftです。
 詳細は省きますが`Dangerfile.swift`をスクリプトファイルとして実行する仕様になっています。
 
-このスクリプトファイルで async/await を取り扱うために、まずは前提としてCLIツールにおける async/await の取り扱いについて解説します。
+このスクリプトファイルでasync/awaitを取り扱うために、まずは前提としてCLIツールにおけるasync/awaitの取り扱いについて解説します。
 
-[^2]: 正確には JavaScriptで書かれた Danger-JS を Swift でラップしたものになります
+[^2]: 正確にはJavaScriptで書かれたDanger-JSをSwiftでラップしたものになります
 
 ## CLIツールと async/await 
 
@@ -60,7 +60,7 @@ try await Task.sleep(nanoseconds: 1_000_000_000)
 print("Hello, World!")
 ```
 
-しかし、これを実行しようとしてもトップレベルコードが async/await に対応していないためビルドエラーが発生します。
+しかし、これを実行しようとしてもトップレベルコードがasync/awaitに対応していないためビルドエラーが発生します。
 
 ```sh
 /work/PackageSample$ swift package init --type executable
@@ -72,7 +72,7 @@ try await Task.sleep(nanoseconds: 1_000_000_000)
 ```
 
 これを解決する手段として、エントリーポイントを`main.swift`の代わりに`@main`ディレクティブを使った型に置き換えます。
-ここでは`main.swift`を消して`Foo.swift`を作成します。その際、 `main()` に `async` を付与することで async/await に対応させることができます。
+ここでは`main.swift`を消して`Foo.swift`を作成します。その際、 `main()` に `async` を付与することでasync/awaitに対応させることができます。
 
 ```swift
 import Foundation
@@ -114,9 +114,11 @@ import Foundation
 
 [^3]: https://github.com/apple/swift/issues/55127
 
+<!-- textlint-disable ja-technical-writing/no-doubled-joshi -->
 このことから、スクリプトファイルは`main.swift`と同様の制約が存在することが分かります。
+<!-- textlint-enable ja-technical-writing/no-doubled-joshi -->
 
-そして、Swift 5.6 までは`Task`を定義して`Task`の実行を`DispatchSemaphore`等で待つといった本末転倒なワークアラウンドが必要でした。
+そして、Swift 5.6までは`Task`を定義して`Task`の実行を`DispatchSemaphore`等で待つといった本末転倒なワークアラウンドが必要でした。
 
 ```swift
 import Foundation
@@ -148,20 +150,20 @@ print("Hello, World!")
 ```
 
 ## Danger-Swift と async/await
-さて、本題となる Danger-Swift についてですがここまで読めばもう`Dangerfile.swift`で async/await を扱う方法について解説する必要はもはや無いと言っても過言ではありません。  
-では、`Dangerfile.swift`で async/await が扱えると何が嬉しいのでしょうか？
+さて、本題となるDanger-Swiftについてですがここまで読めばもう`Dangerfile.swift`でasync/awaitを扱う方法について解説する必要はもはや無いと言っても過言ではありません。  
+では、`Dangerfile.swift`でasync/awaitが扱えると何が嬉しいのでしょうか？
 
-実は`Dangerfile.swift`で使う Danger の API に GitHub API を扱う**Octokit.swift**[^5] のAPIが含まれており、`Dangerfile.swift`から直接GitHub APIを呼び出すことができました。
-しかし、Swift 5.6までは前述の通り async/await を直接扱うことができなかったため、`DispatchSemaphore`等によるワークアラウンドが必須でした。
+実は`Dangerfile.swift`で使うDangerのAPIにGitHub APIを扱う**Octokit.swift**[^5] のAPIが含まれており、`Dangerfile.swift`から直接GitHub APIを呼び出すことができました。
+しかし、Swift 5.6までは前述の通りasync/awaitを直接扱うことができなかったため、`DispatchSemaphore`等によるワークアラウンドが必須でした。
 
-Swift 5.7で async/await を使って呼び出せるようになったことで、 GitHub API を使ったバリデーションや PR の操作がシンプルに書けるようになりました。
+Swift 5.7でasync/awaitを使って呼び出せるようになったことで、 GitHub APIを使ったバリデーションやPRの操作がシンプルに書けるようになりました。
 
 [^5]: https://github.com/nerdishbynature/octokit.swift
 
 以下に「警告やエラーが無かったら自動でApproveする」例を記載しています。
 
 ※ このコードで呼び出している`postReview`や`submitReview`はPR[^6]を出している途中のものでまだOctokit.swift上でリリースされていません。
-現状の Danger-Swift でもこれらのAPIは使用できない[^7]ため、将来的に実現できるであろうコードを紹介します。
+現状のDanger-SwiftでもこれらのAPIは使用できない[^7]ため、将来的に実現できるであろうコードを紹介します。
 
 [^6]: https://github.com/nerdishbynature/octokit.swift/pull/171
 [^7]: 7/4現在
@@ -195,10 +197,10 @@ if (danger.warnings + danger.fails).isEmpty {
 }
 ```
 
-APIの仕様上Approveをつけるために2つのAPIを叩く必要があるため、それだけでも async/await で直列に書けるメリットが分かるかと思います。
+APIの仕様上Approveをつけるために2つのAPIを叩く必要があるため、それだけでもasync/awaitで直列に書けるメリットが分かるはずです。
 
 ## 終わりに
-トップレベルコードで async/await が扱えるようになったことで、Danger-Swiftをもっとリッチに扱える環境が整いました。
-今回はDanger-Swiftに内蔵しているOctokit.swiftのAPIを使う例で書いていますが`URLSession`を使った通常の通信処理も async/await で扱えるため、JIRA・Trello・Notion等のツールと連携してPRの状態を管理するといったことも簡単にできるようになるでしょう。
+トップレベルコードでasync/awaitが扱えるようになったことで、Danger-Swiftをもっとリッチに扱える環境が整いました。
+今回はDanger-Swiftに内蔵しているOctokit.swiftのAPIを使う例で書いていますが`URLSession`を使った通常の通信処理もasync/awaitで扱えるため、JIRA・Trello・Notion等のツールと連携してPRの状態を管理するといったことも簡単にできるようになるでしょう。
 
-これを機に Danger-Swift を使った事例が増えてコミュニティがもっと活発になってくれれば幸いです。
+これを機にDanger-Swiftを使った事例が増えてコミュニティがもっと活発になってくれれば幸いです。
