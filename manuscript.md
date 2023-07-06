@@ -34,8 +34,8 @@ iOSDC 2022のパンフレットに **「CLIツールで始めるasync/await」**
 風向きが変わったのはSwift 5.7からで、 Danger-Swiftでもasync/awaitを扱う展望が見えたため、本稿で解説します。
 
 ## エントリーポイントとトップレベルコード
-プログラムが実行される際最初に呼び出される部分をエントリーポイントと呼び、Swiftにおいては `main.swift` や `@main` ディレクティブが付いた型の `static func main()` 等がそれに該当します。
-また `main.swift` やSwiftスクリプトには処理を直接記述でき、これをトップレベルコードと呼びます。
+プログラムが実行される際最初に呼び出される部分をエントリーポイントと呼び、Swiftにおいては`main.swift`や`@main`ディレクティブが付いた型の`static func main()`等がそれに該当します。
+また`main.swift`やSwiftスクリプトには処理を直接記述でき、これをトップレベルコードと呼びます。
 
 ## Danger-Swift について
 
@@ -72,7 +72,7 @@ try await Task.sleep(nanoseconds: 1_000_000_000)
 ```
 
 これを解決する手段として、エントリーポイントを`main.swift`の代わりに`@main`ディレクティブを使った型に置き換えます。
-ここでは`main.swift`を消して`Foo.swift`を作成します。その際、 `main()` に `async` を付与することでasync/awaitに対応させることができます。
+ここでは`main.swift`を消して`Foo.swift`を作成します。その際、`main()`に`async`を付与することでasync/awaitに対応させることができます。
 
 ```swift
 import Foundation
@@ -150,13 +150,13 @@ print("Hello, World!")
 ```
 
 ## Danger-Swift と async/await
-さて、本題となるDanger-Swiftについてですがここまで読めばもう`Dangerfile.swift`でasync/awaitを扱う方法について解説する必要はもはや無いと言っても過言ではありません。  
+さて、本題となるDanger-Swiftについてですがここまで読めばもう`Dangerfile.swift`でasync/awaitを扱う方法について解説する必要は無いでしょう。  
 では、`Dangerfile.swift`でasync/awaitが扱えると何が嬉しいのでしょうか？
 
-実は`Dangerfile.swift`で使うDangerのAPIにGitHub APIを扱う**Octokit.swift**[^5] のAPIが含まれており、`Dangerfile.swift`から直接GitHub APIを呼び出すことができました。
+実は`Dangerfile.swift`で使うDangerのAPIにGitHub APIを扱う**Octokit.swift**[^5] のAPIが含まれており、`Dangerfile.swift`から直接GitHub APIを呼び出すことができます。
 しかし、Swift 5.6までは前述の通りasync/awaitを直接扱うことができなかったため、`DispatchSemaphore`等によるワークアラウンドが必須でした。
 
-Swift 5.7でasync/awaitを使って呼び出せるようになったことで、 GitHub APIを使ったバリデーションやPRの操作がシンプルに書けるようになりました。
+Swift 5.7でasync/awaitを使って呼び出せるようになったことで、GitHub APIを使ったバリデーションやPRの操作がシンプルに書けるようになりました。
 
 [^5]: https://github.com/nerdishbynature/octokit.swift
 
